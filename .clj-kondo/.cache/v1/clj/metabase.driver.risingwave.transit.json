@@ -1,0 +1,1 @@
+["^ ","~$make-subname",["^ ","~:row",9,"~:col",1,"~:private",true,"~:fixed-arities",["~#set",[3]],"~:name","^0","~:ns","~$metabase.driver.risingwave","~:top-ns","^8","~:arities",["^ ","~i3",["^ ","~:ret","~:string","~:arglist-str","[host port db]"]]],"~:filename","/home/nstabel/Workspace/metabase-risingwave-driver/src/metabase/driver/risingwave.clj"]

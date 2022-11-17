@@ -1,0 +1,83 @@
+info:
+  name: Metabase RisingWave Driver
+  version: 1.0.0-SNAPSHOT-42.5.1
+  description: Allows Metabase to connect to RisingWave databases.
+
+# # You can list any dependencies needed by the plugin by specifying a
+# # list of dependencies. If all dependencies are not met, the plugin
+# # will not be initialized.
+# #
+# # A dependency may be either a 'class' or (in the future) a 'plugin' dependency
+# dependencies:
+
+#   # A 'class' dependency checks whether a given class is available on
+#   # the classpath. It doesn't initialize the class; Metabase defers initialization
+#   # until it needs to use the driver
+#   # Don't use this for classes that ship as part of the plugin itself;
+#   # only use it for external dependencies.
+#   - class: oracle.jdbc.OracleDriver
+
+#     # You may optionally add a message that will be displayed for
+#     # information purposes in the logs, and possibly in a plugin
+#     # management page as well in the future
+#     message: >
+#       Metabase requires the Oracle JDBC driver to connect to JDBC databases. See
+#       https://metabase.com/docs/latest/administration-guide/databases/oracle.html
+#       for more details
+
+#   # A 'plugin' dependency checks whether a given plugin is available.
+#   # The value for 'plugin' is whatever that plugin has as its 'name:' -- make
+#   # sure you match it exactly!
+#   #
+#   # If the dependency is not available when this module is first loaded, the module
+#   # will be tried again later after more modules are loaded. This means things will
+#   # still work the way we expect even if, say, we initially attempt to load the
+#   # BigQuery driver *before* loading its dependency, the shared Google driver. Once
+#   # the shared Google driver is loaded, Metabase will detect that BigQuery's
+#   # dependencies are now satisfied and initialize the plugin.
+#   #
+#   # In the future, we'll like add version restrictions as well, but for now we only match
+#   # by name.
+#   - plugin: Metabase SQLHeavy Driver
+
+# If a plugin adds a driver it should define a driver: section.
+#
+# To define multiple drivers, you can pass a list of maps instead. Note
+# that multiple drivers currently still must share the same dependencies
+# set and initialization steps. Thus registering multiple drivers is most
+# useful for slight variations on the same driver or including an abstract
+# parent driver. Note that init steps will get ran once for each driver
+# that gets loaded. This can result in duplicate driver instances registered
+# with the DriverManager, which is certainly not ideal but does not actually
+# hurt anything.
+#
+# In the near future I might move init steps into driver itself (or
+# at least allow them there)
+driver:
+  name: risingwave
+  display-name: RisingWave
+  lazy-load: true
+  parent: postgres
+  # List of connection properties to ask users to set to connect to
+  # this driver.
+  connection-properties:
+    - user
+    - password
+    - merge:
+      - host
+      - default: risingwave
+    - merge:
+      - port
+      - default: 4566
+    - merge:
+      - dbname
+      - default: dev
+
+  # You can also tell Metabase to include SSL tunnel configuration options with
+  # connection-properties-include-tunnel-config (default: false)
+  connection-properties-include-tunnel-config: false
+init:
+  - step: load-namespace
+    namespace: metabase.driver.risingwave
+  - step: register-jdbc-driver
+    class: org.postgresql.Driver
